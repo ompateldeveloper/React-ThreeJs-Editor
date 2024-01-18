@@ -6,7 +6,7 @@ export default function Editor() {
     const mountRef = useRef();
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({antialias:true});
     const controls = new OrbitControls(camera, renderer.domElement);
     const transform = new TransformControls( camera, renderer.domElement );
     function render() {
@@ -37,7 +37,7 @@ export default function Editor() {
         scene.add(transform)
         
         const boxGeometry = new THREE.BoxGeometry();
-        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
         const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
         scene.add(boxMesh);
         transform.attach( boxMesh );
