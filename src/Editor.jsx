@@ -4,18 +4,24 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { ViewHelper } from 'three/examples/jsm/helpers/ViewHelper.js';
 import * as Accordion from '@radix-ui/react-accordion';
+
+
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const controls = new OrbitControls(camera, renderer.domElement);
+const transform = new TransformControls(camera, renderer.domElement);  
+
+
 export default function Editor() {
 
     const [meshArray, setMeshArray] = useState([]);
     const [mode, setMode] = useState('translate');
     const [whatsClicked,setWhatsClicked] = useState(null)
     const mountRef = useRef();
+
     let targetImage ;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    const controls = new OrbitControls(camera, renderer.domElement);
-    const transform = new TransformControls(camera, renderer.domElement);
     transform.setSize(0.5,0.5)
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -25,6 +31,7 @@ export default function Editor() {
     gridHelper.material.transparent = true;
     function render() {
         renderer.render(scene, camera);
+        controls.update()
     }
 
     const handleResize = () => {
@@ -51,7 +58,7 @@ export default function Editor() {
         );
         console.log(transform.children);
         const intersects = raycaster.intersectObjects(clickableObjects, true);
-        const intersectsall = raycaster.intersectObjects(transform.children, true);
+        // const intersectsall = raycaster.intersectObjects(transform.children, true);
         console.log("i",intersects);
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
@@ -91,7 +98,7 @@ export default function Editor() {
                 break;
 
             case 16: // Shift
-                transform.setTranslationSnap(250);
+                transform.setTranslationSnap(10);
                 transform.setRotationSnap(THREE.MathUtils.degToRad(15));
                 transform.setScaleSnap(0.25);
                 break;
@@ -151,6 +158,8 @@ export default function Editor() {
 
     useEffect(() => {
         transform.setMode(mode)
+        console.log(mode);
+        console.log(transform.mode)
     }, [mode])
 
 
@@ -171,7 +180,7 @@ export default function Editor() {
         });
         scene.add(transform)
 
-        const boxGeometry = new THREE.PlaneGeometry(3.4, 3);
+        const boxGeometry = new THREE.BoxGeometry(1,1,1);
         const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff,side:THREE.DoubleSide });
         const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
         scene.add(boxMesh)
@@ -217,7 +226,7 @@ export default function Editor() {
         <div className="editor-main flex items-center jc overflow-hidden relative">
             <div ref={mountRef} className=' h-screen w-9/12 bg-zinc-100'>
             </div>
-            <div className="absolute top-4 left-2 bg-zinc-200 rounded-md h-36 w-12 overflow-hidden " style={whatsClicked===null?{opacity:0.2,pointerEvents:'none'}:{opacity:1,pointerEvents:'all'}}>
+            <div className="absolute top-4 left-2 bg-zinc-200 rounded-md h-36 w-12 overflow-hidden " style={null===null?{opacity:0,pointerEvents:'none'}:{opacity:1,pointerEvents:'all'}}>
                 
                 <input type="radio" className='hidden peer/translate' name="mode" id="translate" onClick={() => {
                     transform.setMode('translate')
@@ -254,7 +263,7 @@ export default function Editor() {
                 <div className="text-2xl m-4 mb-2">Added Items</div>
                 <div className="list">
                     {
-                        ["logo-1","photo-1"].map((data,index)=>(
+                        ["Target Image","Box",""].map((data,index)=>(
                             <div className='h-10 w-full p-4 flex items-center justify-start' key={index}>
                                 <div className="mx-2 rounded-full h-2 w-2 bg-blue-500"></div>
                                 {data}
