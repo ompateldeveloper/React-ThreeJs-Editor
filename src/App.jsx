@@ -1,4 +1,4 @@
-import Editor from "./Editor";
+import Editor from "./lib/Editor";
 
 export default function App() {
     return (

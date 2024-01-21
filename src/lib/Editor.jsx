@@ -12,7 +12,8 @@ const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 const controls = new OrbitControls(camera, renderer.domElement);
 const transform = new TransformControls(camera, renderer.domElement);  
-
+controls.dampingFactor= 0.1
+controls.enableDamping =true
 
 export default function Editor() {
 
@@ -56,6 +57,7 @@ export default function Editor() {
           && obj !== transform
           && obj !== targetImage
         );
+
         console.log(transform.children);
         const intersects = raycaster.intersectObjects(clickableObjects, true);
         // const intersectsall = raycaster.intersectObjects(transform.children, true);
@@ -261,15 +263,25 @@ export default function Editor() {
             <div className="line h-screen w-px bg-zinc-300"></div>
             <div className="right w-3/12 h-screen bg-zinc-200 dark:bg-zinc-800">
                 <div className="text-2xl m-4 mb-2">Added Items</div>
-                <div className="list">
+                <div className="mesh-list">
                     {
                         ["Target Image","Box",""].map((data,index)=>(
-                            <div className='h-10 w-full p-4 flex items-center justify-start' key={index}>
-                                <div className="mx-2 rounded-full h-2 w-2 bg-blue-500"></div>
+                            <div className='h-10 w-full p-4 flex items-center justify-start' key={index} onClick={()=>{console.log(scene.children,"hello")}}>
+                                <div className="mx-2 rounded-full h-2 w-2 bg-blue-500" ></div>
                                 {data}
                             </div>
                         ))
                     }
+                </div>
+                <div className="stats">
+                    <div className="translate-stats">
+                        <h3>Translate</h3>
+                        <form className='flex items-center justify-evenly'> 
+                            <input type="text" />
+                        </form>
+                    </div>
+                    <div className="rotate-stats"></div>
+                    <div className="scale-stats"></div>
                 </div>
 
             </div>
